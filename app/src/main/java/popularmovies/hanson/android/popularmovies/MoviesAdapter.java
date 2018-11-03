@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesViewHolder> {
@@ -33,7 +32,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MoviesViewHolder moviesViewHolder, int i) {
         Movies.ResultsBean movies = mMoviesList.get(i);
-        Picasso.with(mCtx).load(movies.getPoster_path())
+        moviesViewHolder.movieTitle.setText(movies.getTitle());
+        Picasso.get().load(movies.getPoster_path())
                 .placeholder(R.color.colorPrimaryDark)
                 .into(moviesViewHolder.imageView);
     }
