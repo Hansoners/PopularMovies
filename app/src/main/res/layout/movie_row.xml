@@ -52,6 +52,16 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/genre_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Action, Adventure"
+                    android:textSize="12sp"
+                    />
+
 
             </LinearLayout>
 

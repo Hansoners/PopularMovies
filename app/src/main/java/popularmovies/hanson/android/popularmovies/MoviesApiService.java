@@ -12,6 +12,12 @@ public interface MoviesApiService {
             @Query("api_key") String apiKey,
             @Query("language") String language,
             @Query("page") int page);
+
+    @GET("/3/genre/movie/list")
+    Call<GenresResponse> getGenres(
+            @Query("api_key") String apiKey,
+            @Query("language") String language
+    );
 }
 
 
