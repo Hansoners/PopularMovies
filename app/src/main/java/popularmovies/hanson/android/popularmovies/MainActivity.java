@@ -6,7 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.List;
@@ -41,6 +44,53 @@ public class MainActivity extends AppCompatActivity {
         getGenres();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_movies, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.sort:
+                showSortMenu();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void showSortMenu() {
+        PopupMenu sortMenu = new PopupMenu(this, findViewById(R.id.sort));
+
+        sortMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                PAGE = 1;
+
+                switch (item.getItemId()) {
+                    case R.id.popular:
+                        CATEGORY = "popular";
+                        getMovies(CATEGORY, PAGE);
+                        return true;
+                    case R.id.top_rated:
+                        CATEGORY = "top_rated";
+                        getMovies(CATEGORY, PAGE);
+                        return true;
+                    default:
+                        return false;
+                }
+
+            }
+        });
+
+        sortMenu.inflate(R.menu.menu_movies_sort);
+        sortMenu.show();
+    }
+
     private void onScrollListener() {
         final GridLayoutManager gManager = new GridLayoutManager(MainActivity.this, 2);
         mRecyclerView.setLayoutManager(gManager);
@@ -53,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (firstVisible + childCount >= itemCount / 2) {
                     if (!newMovies) {
-                        getMovies(PAGE + 1);
+                        getMovies(CATEGORY, PAGE + 1);
                     }
                 }
             }
@@ -66,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(List<Genres> genres) {
                 genresList = genres;
-                getMovies(PAGE);
+                getMovies(CATEGORY, PAGE);
             }
 
             @Override
@@ -76,9 +126,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getMovies(int page) {
+    private void getMovies(String category, int page) {
         newMovies = true;
-        moviesRepository.getMovies(page, new OnGetMoviesCallback() {
+        CATEGORY = category;
+        moviesRepository.getMovies(category, page, new OnGetMoviesCallback() {
 
             @Override
             public void onSuccess(List<Movies.ResultsBean> movies, int page) {
@@ -86,6 +137,11 @@ public class MainActivity extends AppCompatActivity {
                     mMoviesAdapter = new MoviesAdapter(movies, genresList, MainActivity.this);
                     mRecyclerView.setAdapter(mMoviesAdapter);
                 } else {
+
+                    if (page == 1) {
+                        mMoviesAdapter.clearMovies();
+                    }
+
                     mMoviesAdapter.addMovies(movies);
                 }
                 PAGE = page;

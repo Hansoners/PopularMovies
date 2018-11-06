@@ -28,8 +28,8 @@ public class MoviesRepository {
         return moviesRepository;
     }
 
-    public void getMovies(int page, final OnGetMoviesCallback cb) {
-        api.getMovies(CATEGORY, API_KEY, LANGUAGE, page)
+    public void getMovies(String category, int page, final OnGetMoviesCallback cb) {
+        api.getMovies(category, API_KEY, LANGUAGE, page)
                 .enqueue(new Callback<Movies>() {
                     @Override
                     public void onResponse(@NonNull Call<Movies> call, @NonNull Response<Movies> response) {
