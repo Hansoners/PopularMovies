@@ -72,7 +72,16 @@ public class Movies {
         private boolean adult;
         private String overview;
         private String release_date;
+        private boolean favorited;
         private List<Integer> genre_ids;
+
+        public boolean isFavorited() {
+            return favorited;
+        }
+
+        public void setFavorited(boolean favorited) {
+            this.favorited = favorited;
+        }
 
         public int getVote_count() {
             return vote_count;

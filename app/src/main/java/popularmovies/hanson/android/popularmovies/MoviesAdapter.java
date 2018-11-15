@@ -1,24 +1,30 @@
 package popularmovies.hanson.android.popularmovies;
 
 import android.content.Context;
-import android.graphics.Movie;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesViewHolder> {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
 
     private List<Movies.ResultsBean> mMoviesList;
     private List<Genres> mGenresList;
     private Context mCtx;
+    private SparseBooleanArray mCheckedItems = new SparseBooleanArray();
 
     MoviesAdapter(List<Movies.ResultsBean> mMoviesList, List<Genres> mGenresList, Context mCtx) {
         this.mMoviesList = mMoviesList;
@@ -35,13 +41,52 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MoviesViewHolder moviesViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final MoviesViewHolder moviesViewHolder, int i) {
         Movies.ResultsBean movies = mMoviesList.get(i);
         moviesViewHolder.genreTitle.setText(getGenres(movies.getGenre_ids()));
         moviesViewHolder.movieTitle.setText(movies.getTitle());
         Picasso.get().load(movies.getPoster_path())
                 .placeholder(R.color.colorPrimaryDark)
                 .into(moviesViewHolder.imageView);
+
+        moviesViewHolder.favBtn.setChecked(mCheckedItems.get(i));
+
+        moviesViewHolder.favBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = moviesViewHolder.getAdapterPosition();
+                final boolean newValue = moviesViewHolder.favBtn.isChecked();
+
+                mCheckedItems.put(position, newValue);
+
+                Snackbar snackbar;
+                if (newValue) {
+                    snackbar = Snackbar.make(v, "Favorited!", Snackbar.LENGTH_SHORT);
+                } else {
+                    snackbar = Snackbar.make(v, "Unfavorited!", Snackbar.LENGTH_SHORT);
+                }
+                snackbar.show();
+
+            }
+        });
+
+    }
+
+    class MoviesViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView imageView;
+        TextView movieTitle, genreTitle;
+        CheckBox favBtn;
+
+        MoviesViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.imageView);
+            movieTitle = itemView.findViewById(R.id.movie_title);
+            genreTitle = itemView.findViewById(R.id.genre_title);
+            favBtn = itemView.findViewById(R.id.favorite_button);
+        }
+
+
     }
 
     @Override
@@ -71,7 +116,5 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesViewHolder> {
         mMoviesList.clear();
         notifyDataSetChanged();
     }
+
 }
-
-
-

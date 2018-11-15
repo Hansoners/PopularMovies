@@ -30,6 +30,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:maxLines="1">
 
             <LinearLayout
@@ -59,20 +61,24 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="Action, Adventure"
-                    android:textSize="12sp"
-                    />
+                    android:textSize="12sp" />
 
 
             </LinearLayout>
 
-            <ImageButton
+            <CheckBox
                 android:id="@+id/favorite_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:layout_margin="12dp"
                 android:layout_alignParentRight="true"
-                android:background="#00FFFFFF"
-                android:padding="12dp"
-                app:srcCompat="@drawable/ic_favorite_black_24dp" />
+                android:button="@null"
+                android:checked="false"
+                android:background="@drawable/heart_icon"
+                android:stateListAnimator="@animator/scale"
+                />
 
         </RelativeLayout>
 
