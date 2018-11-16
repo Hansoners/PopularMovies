@@ -8,6 +8,7 @@
     android:layout_marginEnd="8dp"
     android:layout_marginStart="8dp"
     android:layout_marginTop="8dp"
+    android:id="@+id/row_cardview"
     tools:ignore="ContentDescription">
 
     <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -30,9 +31,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="5dp"
+            android:maxLines="1"
             android:paddingBottom="5dp"
-            android:maxLines="1">
+            android:paddingTop="5dp">
 
             <LinearLayout
                 android:id="@+id/title_section"
@@ -70,15 +71,14 @@
                 android:id="@+id/favorite_button"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:gravity="center"
+                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_margin="12dp"
-                android:layout_alignParentRight="true"
+                android:background="@drawable/heart_icon"
                 android:button="@null"
                 android:checked="false"
-                android:background="@drawable/heart_icon"
-                android:stateListAnimator="@animator/scale"
-                />
+                android:gravity="center"
+                android:stateListAnimator="@animator/scale" />
 
         </RelativeLayout>
 

@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         moviesRepository = MoviesRepository.getInstance();
+        setTitle("Popular");
 
         //RecyclerView setup
         mRecyclerView = findViewById(R.id.recyclerView);
@@ -94,13 +95,16 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.popular:
                         CATEGORY = "popular";
                         getMovies(CATEGORY, PAGE);
+                        setTitle("Popular");
                         return true;
                     case R.id.top_rated:
                         CATEGORY = "top_rated";
                         getMovies(CATEGORY, PAGE);
+                        setTitle("Top Rated");
                         return true;
                     case R.id.favourites:
                         getMovies("favourites", PAGE);
+                        setTitle("Favourites");
                     default:
                         return false;
                 }
@@ -194,5 +198,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+
 }
 

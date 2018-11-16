@@ -1,4 +1,6 @@
 package popularmovies.hanson.android.popularmovies;
+import android.graphics.Movie;
+
 import java.util.List;
 
 public interface OnGetMoviesCallback {

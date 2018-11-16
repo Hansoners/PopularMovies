@@ -1,10 +1,12 @@
 package popularmovies.hanson.android.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
@@ -50,12 +52,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
     @Override
     public void onBindViewHolder(@NonNull final MoviesViewHolder moviesViewHolder, int i) {
-        Movies.ResultsBean movies = mMoviesList.get(i);
+        final Movies.ResultsBean movies = mMoviesList.get(i);
         moviesViewHolder.genreTitle.setText(getGenres(movies.getGenre_ids()));
         moviesViewHolder.movieTitle.setText(movies.getTitle());
         Picasso.get().load(movies.getPoster_path())
-                .placeholder(R.color.colorPrimaryDark)
                 .into(moviesViewHolder.imageView);
+
+        for (Movies.ResultsBean m : mFavoriteList) {
+            map.put(m.getTitle(), true);
+        }
 
         if (map.containsKey(movies.getTitle())) {
             if (map.get(movies.getTitle()))
@@ -98,6 +103,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         prefsEditor.putString("FavList", jsonMovies);
         prefsEditor.apply();
 
+        moviesViewHolder.movie_cardview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MovieActivity.class);
+                intent.putExtra("movie_id", movies.getId());
+                v.getContext().startActivity(intent);
+            }
+        });
+
+
     }
 
     class MoviesViewHolder extends RecyclerView.ViewHolder {
@@ -105,6 +120,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         ImageView imageView;
         TextView movieTitle, genreTitle;
         CheckBox favBtn;
+        CardView movie_cardview;
 
         MoviesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -112,6 +128,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
             movieTitle = itemView.findViewById(R.id.movie_title);
             genreTitle = itemView.findViewById(R.id.genre_title);
             favBtn = itemView.findViewById(R.id.favorite_button);
+            movie_cardview = itemView.findViewById(R.id.row_cardview);
         }
 
 
