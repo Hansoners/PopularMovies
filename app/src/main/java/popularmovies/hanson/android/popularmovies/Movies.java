@@ -14,14 +14,6 @@ public class Movies implements Serializable {
         return page;
     }
 
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public int getTotal_results() {
-        return total_results;
-    }
-
     public void setTotal_results(int total_results) {
         this.total_results = total_results;
     }
@@ -160,14 +152,6 @@ public class Movies implements Serializable {
             return "https://image.tmdb.org/t/p/w500" + backdrop_path;
         }
 
-        public void setBackdrop_path(String backdrop_path) {
-            this.backdrop_path = backdrop_path;
-        }
-
-        public boolean isAdult() {
-            return adult;
-        }
-
         public void setAdult(boolean adult) {
             this.adult = adult;
         }
@@ -184,16 +168,9 @@ public class Movies implements Serializable {
             return release_date;
         }
 
-        public void setRelease_date(String release_date) {
-            this.release_date = release_date;
-        }
-
         public List<Integer> getGenre_ids() {
             return genre_ids;
         }
 
-        public void setGenre_ids(List<Integer> genre_ids) {
-            this.genre_ids = genre_ids;
-        }
     }
 }

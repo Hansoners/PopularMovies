@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class GenresResponse {
+public class TrailersResponse {
 
-    @SerializedName("genres")
+    @SerializedName("results")
     @Expose
-    private List<Genres> genres;
-    public List<Genres> getGenres() {
-        return genres;
-    }
+    private List<Trailers> trailers;
 
+    public List<Trailers> getTrailers() {
+        return trailers;
+    }
 }

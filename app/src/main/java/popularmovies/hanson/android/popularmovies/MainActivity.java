@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         moviesRepository = MoviesRepository.getInstance();
 
-
+        //Toolbar setup
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -61,11 +61,8 @@ public class MainActivity extends AppCompatActivity {
             Type type = new TypeToken<List<Movies.ResultsBean>>() {
             }.getType();
             favList = gson.fromJson(json, type);
-        }
+        } else favList = new ArrayList<>();
 
-        else {
-            favList = new ArrayList<>();
-        }
         getGenres();
     }
 
@@ -163,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!category.equals("favourites")) {
             CATEGORY = category;
-            moviesRepository.getMovies(category, page, new OnGetMoviesCallback() {
+            moviesRepository.getMovies(category, page, new OnMoviesCallback() {
 
                 @Override
                 public void onSuccess(List<Movies.ResultsBean> movies, int page) {
@@ -175,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
                         if (page == 1) {
                             mMoviesAdapter.clearMovies();
                         }
-
                         mMoviesAdapter.addMovies(movies, favList);
                     }
                     PAGE = page;
@@ -188,23 +184,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         } else {
-
             if (mMoviesAdapter == null) {
                 mMoviesAdapter = new MoviesAdapter(favList, genresList, MainActivity.this, favList);
                 mRecyclerView.setAdapter(mMoviesAdapter);
             } else {
-
                 if (page == 1) {
                     mMoviesAdapter.clearMovies();
                 }
-
                 mMoviesAdapter.addMovies(favList, favList);
             }
-
         }
-
     }
-
-
 }
 

@@ -28,7 +28,7 @@ public class MoviesRepository {
         return moviesRepository;
     }
 
-    public void getMovies(String category, int page, final OnGetMoviesCallback cb) {
+    public void getMovies(String category, int page, final OnMoviesCallback cb) {
         api.getMovies(category, API_KEY, LANGUAGE, page)
                 .enqueue(new Callback<Movies>() {
                     @Override
@@ -63,6 +63,29 @@ public class MoviesRepository {
 
                     @Override
                     public void onFailure(@NonNull Call<GenresResponse> call, @NonNull Throwable t) {
+                        cb.onError();
+                    }
+                });
+    }
+
+    public void getTrailers(int id, final OnTrailersCallback cb) {
+        api.getTrailers(id, API_KEY, LANGUAGE)
+                .enqueue(new Callback<TrailersResponse>() {
+                    @Override
+                    public void onResponse(Call<TrailersResponse> call, Response<TrailersResponse> response) {
+                        if (response.isSuccessful()) {
+                            TrailersResponse trailerResponse = response.body();
+                            if (trailerResponse != null && trailerResponse.getTrailers() != null) {
+                                cb.onSuccess(trailerResponse.getTrailers());
+                            } else {
+                                cb.onError();
+                            }
+                        } else {
+                            cb.onError();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<TrailersResponse> call, Throwable t) {
                         cb.onError();
                     }
                 });
