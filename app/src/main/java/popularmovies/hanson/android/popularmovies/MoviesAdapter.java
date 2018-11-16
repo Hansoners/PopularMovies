@@ -9,19 +9,17 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,11 +101,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         prefsEditor.putString("FavList", jsonMovies);
         prefsEditor.apply();
 
-        moviesViewHolder.movie_cardview.setOnClickListener(new View.OnClickListener() {
+        moviesViewHolder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), MovieActivity.class);
-                intent.putExtra("movie_id", movies.getId());
+                intent.putExtra("movie", movies);
+                intent.putExtra("genreList", (Serializable) mGenresList);
                 v.getContext().startActivity(intent);
             }
         });
@@ -120,7 +119,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         ImageView imageView;
         TextView movieTitle, genreTitle;
         CheckBox favBtn;
-        CardView movie_cardview;
 
         MoviesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -128,7 +126,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
             movieTitle = itemView.findViewById(R.id.movie_title);
             genreTitle = itemView.findViewById(R.id.genre_title);
             favBtn = itemView.findViewById(R.id.favorite_button);
-            movie_cardview = itemView.findViewById(R.id.row_cardview);
         }
 
 

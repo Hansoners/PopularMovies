@@ -3,7 +3,9 @@ package popularmovies.hanson.android.popularmovies;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Genres {
+import java.io.Serializable;
+
+public class Genres implements Serializable {
 
     @SerializedName("id")
     @Expose

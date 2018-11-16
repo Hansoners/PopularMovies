@@ -1,8 +1,9 @@
 package popularmovies.hanson.android.popularmovies;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Movies {
+public class Movies implements Serializable {
 
     private int page;
     private int total_results;
@@ -41,7 +42,7 @@ public class Movies {
         this.results = results;
     }
 
-    public static class ResultsBean {
+    public static class ResultsBean implements Serializable {
         /**
          * vote_count : 1833
          * id : 335983
@@ -156,7 +157,7 @@ public class Movies {
         }
 
         public String getBackdrop_path() {
-            return backdrop_path;
+            return "https://image.tmdb.org/t/p/w500" + backdrop_path;
         }
 
         public void setBackdrop_path(String backdrop_path) {
