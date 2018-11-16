@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -28,7 +27,6 @@ public class MovieActivity extends AppCompatActivity {
     private TextView movieOverviewLabel;
     private TextView movieReleaseDate;
     private RatingBar movieRating;
-    private LinearLayout movieTrailers;
     private LinearLayout movieReviews;
     private ImageView trailerThumbnail;
     private TextView trailersLabel;
@@ -46,15 +44,16 @@ public class MovieActivity extends AppCompatActivity {
         Movies.ResultsBean movie = (Movies.ResultsBean) i.getSerializableExtra("movie");
         genresList = (List<Genres>) i.getSerializableExtra("genreList");
 
-        initUI();
+        initializeUI();
         setupToolbar();
         bindUI(movie);
         getTrailers(movie);
+        getReviews(movie);
 
     }
 
 
-    private void initUI() {
+    private void initializeUI() {
         movieBackdrop = findViewById(R.id.movieDetailsBackdrop);
         movieTitle = findViewById(R.id.movieDetailsTitle);
         movieGenres = findViewById(R.id.movieDetailsGenres);
@@ -141,6 +140,27 @@ public class MovieActivity extends AppCompatActivity {
     private void showTrailer(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
+    }
+
+    private void getReviews(Movies.ResultsBean movie) {
+        moviesRepository.getReviews(movie.getId(), new OnReviewsCallback() {
+            @Override
+            public void onSuccess(List<Reviews> reviews) {
+                movieReviews.removeAllViews();
+                for (Reviews r : reviews) {
+                    View parent = getLayoutInflater().inflate(R.layout.review, movieReviews, false);
+                    TextView author = parent.findViewById(R.id.reviewAuthor);
+                    TextView content = parent.findViewById(R.id.reviewContent);
+                    author.setText(r.getAuthor());
+                    content.setText(r.getContent());
+                    movieReviews.addView(parent);
+                }
+            }
+
+            @Override
+            public void onError() {
+            }
+        });
     }
 
 }

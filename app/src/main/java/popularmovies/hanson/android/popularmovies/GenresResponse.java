@@ -10,6 +10,11 @@ public class GenresResponse {
     @SerializedName("genres")
     @Expose
     private List<Genres> genres;
+
+    public GenresResponse(List<Genres> genres) {
+        this.genres = genres;
+    }
+
     public List<Genres> getGenres() {
         return genres;
     }

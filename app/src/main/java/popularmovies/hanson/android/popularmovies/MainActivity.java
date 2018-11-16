@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private List<Genres> genresList;
     private boolean newMovies;
     public static int PAGE = 1;
-    public static String API_KEY = "35740caead749a7b9336c86105523cc2";
-    public static String LANGUAGE = "en-US";
     public static String CATEGORY = "popular";
     List<Movies.ResultsBean> favList;
     SharedPreferences appSharedPrefs;

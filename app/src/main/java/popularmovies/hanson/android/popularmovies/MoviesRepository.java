@@ -84,10 +84,36 @@ public class MoviesRepository {
                             cb.onError();
                         }
                     }
+
                     @Override
                     public void onFailure(Call<TrailersResponse> call, Throwable t) {
                         cb.onError();
                     }
+                });
+    }
+
+    public void getReviews(int id, final OnReviewsCallback cb) {
+        api.getReviews(id, API_KEY, LANGUAGE)
+                .enqueue(new Callback<ReviewsResponse>() {
+                    @Override
+                    public void onResponse(Call<ReviewsResponse> call, Response<ReviewsResponse> response) {
+                        if (response.isSuccessful()) {
+                            ReviewsResponse reviewResponse = response.body();
+                            if (reviewResponse != null && reviewResponse.getReviews() != null) {
+                                cb.onSuccess(reviewResponse.getReviews());
+                            } else {
+                                cb.onError();
+                            }
+                        } else {
+                            cb.onError();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ReviewsResponse> call, Throwable t) {
+                        cb.onError();
+                    }
+
                 });
     }
 }

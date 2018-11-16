@@ -26,6 +26,13 @@ public interface MoviesApiService {
             @Query("api_key") String apiKey,
             @Query("language") String language
     );
+
+    @GET("/3/movie/{movie_id}/reviews")
+    Call<ReviewsResponse> getReviews(
+            @Path("movie_id") int id,
+            @Query("api_key") String apiKEy,
+            @Query("language") String language
+    );
 }
 
 
