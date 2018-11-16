@@ -1,6 +1,8 @@
 package popularmovies.hanson.android.popularmovies;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
@@ -13,22 +15,28 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
 
     private List<Movies.ResultsBean> mMoviesList;
+    private List<Movies.ResultsBean> mFavoriteList;
     private List<Genres> mGenresList;
+    private Map<String, Boolean> map = new HashMap<>();
     private Context mCtx;
-    private SparseBooleanArray mCheckedItems = new SparseBooleanArray();
 
-    MoviesAdapter(List<Movies.ResultsBean> mMoviesList, List<Genres> mGenresList, Context mCtx) {
+    MoviesAdapter(List<Movies.ResultsBean> mMoviesList, List<Genres> mGenresList, Context mCtx, List<Movies.ResultsBean> mFavoriteList) {
         this.mMoviesList = mMoviesList;
         this.mGenresList = mGenresList;
+        this.mFavoriteList = mFavoriteList;
         this.mCtx = mCtx;
     }
 
@@ -49,15 +57,27 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                 .placeholder(R.color.colorPrimaryDark)
                 .into(moviesViewHolder.imageView);
 
-        moviesViewHolder.favBtn.setChecked(mCheckedItems.get(i));
+        if (map.containsKey(movies.getTitle())) {
+            if (map.get(movies.getTitle()))
+                moviesViewHolder.favBtn.setChecked(true);
+        } else moviesViewHolder.favBtn.setChecked(false);
 
         moviesViewHolder.favBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = moviesViewHolder.getAdapterPosition();
+                Movies.ResultsBean movies = mMoviesList.get(position);
                 final boolean newValue = moviesViewHolder.favBtn.isChecked();
 
-                mCheckedItems.put(position, newValue);
+                if (newValue && (!mFavoriteList.contains(mMoviesList.get(position)))) {
+                    map.put(movies.getTitle(), true);
+                    mFavoriteList.add(mMoviesList.get(position));
+                    moviesViewHolder.favBtn.setChecked(true);
+                } else {
+                    map.put(movies.getTitle(), false);
+                    mFavoriteList.remove(mFavoriteList.indexOf(mMoviesList.get(position)));
+                    moviesViewHolder.favBtn.setChecked(false);
+                }
 
                 Snackbar snackbar;
                 if (newValue) {
@@ -69,6 +89,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
             }
         });
+
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(mCtx);
+        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+        Gson gson = new Gson();
+        String jsonMovies = gson.toJson(mFavoriteList);
+        prefsEditor.putString("FavList", jsonMovies);
+        prefsEditor.apply();
 
     }
 
@@ -107,8 +135,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         return TextUtils.join(", ", movieGenres);
     }
 
-    public void addMovies(List<Movies.ResultsBean> moviesAdd) {
+    public void addMovies(List<Movies.ResultsBean> moviesAdd, List<Movies.ResultsBean> favList) {
         mMoviesList.addAll(moviesAdd);
+        mFavoriteList = favList;
         notifyDataSetChanged();
     }
 

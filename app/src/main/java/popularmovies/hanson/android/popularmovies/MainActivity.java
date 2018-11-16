@@ -1,22 +1,23 @@
 package popularmovies.hanson.android.popularmovies;
 
-import android.graphics.Movie;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     public static String API_KEY = "35740caead749a7b9336c86105523cc2";
     public static String LANGUAGE = "en-US";
     public static String CATEGORY = "popular";
+    List<Movies.ResultsBean> favList;
+    SharedPreferences appSharedPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,21 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
         onScrollListener();
 
+        //Favourites
+        appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(MainActivity.this);
+        Gson gson = new Gson();
+        String json = appSharedPrefs.getString("FavList", "");
+
+        if (!json.equals("")) {
+            Type type = new TypeToken<List<Movies.ResultsBean>>() {
+            }.getType();
+            favList = gson.fromJson(json, type);
+        }
+
+        else {
+            favList = new ArrayList<>();
+        }
         getGenres();
     }
 
@@ -65,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private void showSortMenu() {
         PopupMenu sortMenu = new PopupMenu(this, findViewById(R.id.sort));
 
+
         sortMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -80,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
                         CATEGORY = "top_rated";
                         getMovies(CATEGORY, PAGE);
                         return true;
+                    case R.id.favourites:
+                        getMovies("favourites", PAGE);
                     default:
                         return false;
                 }
@@ -128,30 +149,50 @@ public class MainActivity extends AppCompatActivity {
 
     private void getMovies(String category, int page) {
         newMovies = true;
-        CATEGORY = category;
-        moviesRepository.getMovies(category, page, new OnGetMoviesCallback() {
 
-            @Override
-            public void onSuccess(List<Movies.ResultsBean> movies, int page) {
-                if (mMoviesAdapter == null) {
-                    mMoviesAdapter = new MoviesAdapter(movies, genresList, MainActivity.this);
-                    mRecyclerView.setAdapter(mMoviesAdapter);
-                } else {
 
-                    if (page == 1) {
-                        mMoviesAdapter.clearMovies();
+        if (!category.equals("favourites")) {
+            CATEGORY = category;
+            moviesRepository.getMovies(category, page, new OnGetMoviesCallback() {
+
+                @Override
+                public void onSuccess(List<Movies.ResultsBean> movies, int page) {
+                    if (mMoviesAdapter == null) {
+                        mMoviesAdapter = new MoviesAdapter(movies, genresList, MainActivity.this, favList);
+                        mRecyclerView.setAdapter(mMoviesAdapter);
+                    } else {
+
+                        if (page == 1) {
+                            mMoviesAdapter.clearMovies();
+                        }
+
+                        mMoviesAdapter.addMovies(movies, favList);
                     }
-
-                    mMoviesAdapter.addMovies(movies);
+                    PAGE = page;
+                    newMovies = false;
                 }
-                PAGE = page;
-                newMovies = false;
+
+                @Override
+                public void onError() {
+                    Toast.makeText(MainActivity.this, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+
+            if (mMoviesAdapter == null) {
+                mMoviesAdapter = new MoviesAdapter(favList, genresList, MainActivity.this, favList);
+                mRecyclerView.setAdapter(mMoviesAdapter);
+            } else {
+
+                if (page == 1) {
+                    mMoviesAdapter.clearMovies();
+                }
+
+                mMoviesAdapter.addMovies(favList, favList);
             }
 
-            @Override
-            public void onError() {
-                Toast.makeText(MainActivity.this, "Please check your internet connection.", Toast.LENGTH_SHORT).show();
-            }
-        });
+        }
+
     }
 }
+
