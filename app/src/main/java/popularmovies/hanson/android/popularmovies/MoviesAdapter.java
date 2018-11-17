@@ -83,9 +83,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
                 Snackbar snackbar;
                 if (newValue) {
-                    snackbar = Snackbar.make(v, "Favorited!", Snackbar.LENGTH_SHORT);
+                    snackbar = Snackbar.make(v, "Favourited!", Snackbar.LENGTH_SHORT);
                 } else {
-                    snackbar = Snackbar.make(v, "Unfavorited!", Snackbar.LENGTH_SHORT);
+                    snackbar = Snackbar.make(v, "Unfavourited!", Snackbar.LENGTH_SHORT);
                 }
                 snackbar.show();
 
