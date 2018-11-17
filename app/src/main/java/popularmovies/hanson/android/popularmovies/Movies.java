@@ -2,6 +2,7 @@ package popularmovies.hanson.android.popularmovies;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 public class Movies implements Serializable {
 
@@ -170,6 +171,15 @@ public class Movies implements Serializable {
 
         public List<Integer> getGenre_ids() {
             return genre_ids;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof Movies.ResultsBean) {
+                Movies.ResultsBean p = (Movies.ResultsBean) o;
+                return Objects.equals(p.getId(), this.id);
+            }
+            return false;
         }
 
     }

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -37,6 +38,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         this.mGenresList = mGenresList;
         this.mFavoriteList = mFavoriteList;
         this.mCtx = mCtx;
+
+        for (Movies.ResultsBean m : mFavoriteList) {
+            map.put(m.getTitle(), true);
+        }
     }
 
     @NonNull
@@ -44,6 +49,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     public MoviesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater inflater = LayoutInflater.from(mCtx);
         View view = inflater.inflate(R.layout.movie_row, viewGroup, false);
+
         return new MoviesViewHolder(view);
     }
 
@@ -54,10 +60,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         moviesViewHolder.movieTitle.setText(movies.getTitle());
         Picasso.get().load(movies.getPoster_path())
                 .into(moviesViewHolder.imageView);
-
-        for (Movies.ResultsBean m : mFavoriteList) {
-            map.put(m.getTitle(), true);
-        }
 
         if (map.containsKey(movies.getTitle())) {
             if (map.get(movies.getTitle()))
@@ -74,11 +76,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                 if (newValue && (!mFavoriteList.contains(mMoviesList.get(position)))) {
                     map.put(movies.getTitle(), true);
                     mFavoriteList.add(mMoviesList.get(position));
-                    moviesViewHolder.favBtn.setChecked(true);
                 } else {
                     map.put(movies.getTitle(), false);
-                    mFavoriteList.remove(mFavoriteList.indexOf(mMoviesList.get(position)));
-                    moviesViewHolder.favBtn.setChecked(false);
+                    mFavoriteList.remove(mMoviesList.get(position));
                 }
 
                 Snackbar snackbar;
@@ -89,16 +89,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                 }
                 snackbar.show();
 
+                addtoFavourites();
+
             }
         });
 
-        SharedPreferences appSharedPrefs = PreferenceManager
-                .getDefaultSharedPreferences(mCtx);
-        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
-        Gson gson = new Gson();
-        String jsonMovies = gson.toJson(mFavoriteList);
-        prefsEditor.putString("FavList", jsonMovies);
-        prefsEditor.apply();
 
         moviesViewHolder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,9 +143,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         return TextUtils.join(", ", movieGenres);
     }
 
-    public void addMovies(List<Movies.ResultsBean> moviesAdd, List<Movies.ResultsBean> favList) {
+    public void addMovies(List<Movies.ResultsBean> moviesAdd) {
         mMoviesList.addAll(moviesAdd);
-        mFavoriteList = favList;
         notifyDataSetChanged();
     }
 
@@ -159,4 +153,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         notifyDataSetChanged();
     }
 
+    public void addtoFavourites() {
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(mCtx);
+        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+        Gson gson = new Gson();
+        String jsonMovies = gson.toJson(mFavoriteList);
+        prefsEditor.putString("FavList", jsonMovies);
+        prefsEditor.apply();
+    }
 }

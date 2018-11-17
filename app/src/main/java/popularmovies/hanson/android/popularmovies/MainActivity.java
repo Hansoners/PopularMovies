@@ -50,16 +50,7 @@ public class MainActivity extends AppCompatActivity {
         onScrollListener();
 
         //Favourites
-        appSharedPrefs = PreferenceManager
-                .getDefaultSharedPreferences(MainActivity.this);
-        Gson gson = new Gson();
-        String json = appSharedPrefs.getString("FavList", "");
-
-        if (!json.equals("")) {
-            Type type = new TypeToken<List<Movies.ResultsBean>>() {
-            }.getType();
-            favList = gson.fromJson(json, type);
-        } else favList = new ArrayList<>();
+        updateFavourites();
 
         getGenres();
     }
@@ -154,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getMovies(String category, int page) {
         newMovies = true;
-
+        updateFavourites();
 
         if (!category.equals("favourites")) {
             CATEGORY = category;
@@ -170,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                         if (page == 1) {
                             mMoviesAdapter.clearMovies();
                         }
-                        mMoviesAdapter.addMovies(movies, favList);
+                        mMoviesAdapter.addMovies(movies);
                     }
                     PAGE = page;
                     newMovies = false;
@@ -189,9 +180,22 @@ public class MainActivity extends AppCompatActivity {
                 if (page == 1) {
                     mMoviesAdapter.clearMovies();
                 }
-                mMoviesAdapter.addMovies(favList, favList);
+                mMoviesAdapter.addMovies(favList);
             }
         }
+    }
+
+    private void updateFavourites() {
+        appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(MainActivity.this);
+        Gson gson = new Gson();
+        String json = appSharedPrefs.getString("FavList", "");
+
+        if (!json.equals("")) {
+            Type type = new TypeToken<List<Movies.ResultsBean>>() {
+            }.getType();
+            favList = gson.fromJson(json, type);
+        } else favList = new ArrayList<>();
     }
 }
 
