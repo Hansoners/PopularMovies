@@ -1,5 +1,9 @@
 # PopularMovies
-Movie Database App
+Movie Database App in Material Design.
+
+## Screenshots
+
+<img src="https://i.imgur.com/x0zLNpk.png" width="200" /> <img src="https://i.imgur.com/ioNkI6o.png" width="200" /> <img src="https://i.imgur.com/4vtSyfC.png" width="200" /> <img src="https://i.imgur.com/xPlWHCA.png" width="200" />
 
 ## Demo
 
